@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Rong Shen Eaton — Personal Homepage</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+  <h1>Rong Shen Eaton</h1>
+  <p>MBA in Data Science, California Science and Technology University</p>
+</header>
+
+<section class="visitor">
+  <p>You are viewing as: <strong>{{ role }}</strong></p>
+  <p class="note">Demo only — this role switcher stands in for Beagle sign-in until week 2.</p>
+  <div class="roles">
+    <button onclick="setRole('public')">Public visitor</button>
+    <button onclick="setRole('signed_in')">Signed in</button>
+    <button onclick="setRole('selected')">Selected visitor</button>
+    <button onclick="setRole('owner')">Owner</button>
+  </div>
+  <button onclick="beagleSignIn()">Sign in with Beagle</button>
+  <span id="beagle-status"></span>
+</section>
+
+{% for section, items in content.items() %}
+<section>
+  <h2>{{ section | capitalize }}</h2>
+  {% for item in items %}
+  <article>
+    <h3>{{ item.title }}</h3>
+    <p>{{ item.text }}</p>
+  </article>
+  {% endfor %}
+</section>
+{% endfor %}
+
+<section>
+  <h2>Ask my assistant</h2>
+  <p class="note">The assistant answers only from the information on this page that you are allowed to see.</p>
+  <div id="chat-log"></div>
+  <input id="chat-input" type="text" placeholder="Ask about my education, experience, or projects…" size="60">
+  <button onclick="ask()">Ask</button>
+</section>
+
+<script>
+async function setRole(role) {
+  await fetch('/api/role', {method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({role})});
+  location.reload();
+}
+async function ask() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const log = document.getElementById('chat-log');
+  log.innerHTML += '<p><strong>You:</strong> ' + text + '</p>';
+  input.value = '';
+  const res = await fetch('/api/chat', {method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({message: text})});
+  const data = await res.json();
+  log.innerHTML += '<p><strong>Assistant:</strong> ' + (data.answer || data.error) + '</p>';
+}
+async function beagleSignIn() {
+  const res = await fetch('/api/auth/nonce');
+  const data = await res.json();
+  document.getElementById('beagle-status').textContent =
+    'Nonce issued (step 1 of Beagle sign-in). Full verification lands in week 2 — see README.';
+}
+document.getElementById('chat-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') ask();
+});
+</script>
+</body>
+</html>

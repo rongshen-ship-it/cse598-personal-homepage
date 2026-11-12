@@ -1,0 +1,10 @@
+body { font-family: Georgia, serif; max-width: 760px; margin: 2em auto; padding: 0 1em; line-height: 1.6; color: #222; }
+header { border-bottom: 2px solid #333; margin-bottom: 1.5em; }
+h1 { margin-bottom: 0; }
+h2 { border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+article { margin-bottom: 1em; }
+.note { color: #666; font-size: 0.9em; }
+button { margin: 0.2em 0.2em 0.2em 0; padding: 0.4em 0.8em; cursor: pointer; }
+input { padding: 0.4em; }
+#chat-log p { background: #f6f6f6; padding: 0.6em; }
+.visitor { background: #f0f0f0; padding: 1em; margin-bottom: 1.5em; }
